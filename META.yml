@@ -1,0 +1,28 @@
+---
+abstract: 'A base class for building next generation DateTime abstraction layers'
+author:
+  - 'Evan Carroll <me@evancarroll.com>'
+build_requires:
+  Test::More: 0
+distribution_type: module
+generated_by: 'Module::Install version 0.79'
+license: perl
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.4.html
+  version: 1.4
+name: DateTimeX-Format
+no_index:
+  directory:
+    - inc
+    - t
+requires:
+  Carp: 0
+  DateTime: 0
+  DateTime::Locale: 0
+  DateTime::TimeZone: 0
+  Moose::Role: 0
+  MooseX::Types::DateTime: 0
+  perl: 5.10.0
+resources:
+  license: http://dev.perl.org/licenses/
+version: 00.01_01
