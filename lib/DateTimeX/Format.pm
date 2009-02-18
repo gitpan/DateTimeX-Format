@@ -13,8 +13,9 @@ use MooseX::Types::DateTime;
 use Carp;
 
 requires 'parse_datetime';
+requires 'format_datetime';
 
-our $VERSION = '00.01_03';
+our $VERSION = '00.01_04';
 
 has 'locale' => (
 	isa         => 'DateTime::Locale'
@@ -37,39 +38,42 @@ around 'parse_datetime' => sub {
 	my ( $sub, $self, $time, $override, @args ) = @_;
 
 	## Set Timezone: from args, then from object
-	my $timezone = $override->{ timezone };
-	if ( not defined $timezone ) {
-		if ( $self->has_timezone ) {
-			$timezone = $self->timezone
-		}
-		elsif ( $self->defaults ) {
-			carp "No timezone supplied to constructor or the call to parse_datetime -- defaulting to floating\n"
-				if $self->debug
-			;
-			$timezone = DateTime::TimeZone->new( name => 'floating' );
-		}
-		else {
+	my $timezone;
+	if ( defined $override->{timezone} ) {
+		$timezone = MooseX::Types::DateTime::to_TimeZone( $override->{timezone} );
+	}
+	elsif ( $self->has_timezone ) {
+		$timezone = $self->timezone;
+	}
+	elsif ( $self->defaults ) {
+		carp "No timezone supplied to constructor or the call to parse_datetime -- defaulting to floating\n"
+			if $self->debug
+		;
+		$timezone = DateTime::TimeZone->new( name => 'floating' );
+	}
+	else {
 			carp "No timezone supplied instructed to not use defaults"
-		};
 	}
 
 
 	## Set Locale: from args, then from object, then guess en_US
-	my $locale = $override->{ locale };
-	if ( not defined $locale ) {
-		if ( $self->has_locale ) {
-			$locale = $self->locale
-		}
-		elsif ( $self->defaults ) {
-			carp "No locale supplied to constructor or the call to parse_datetime -- defaulting to en_US\n"
-				if $self->debug
-			;
-			$locale = DateTime::Locale->load( 'en_US' );
-		}
-		else {
-			carp "No timezone supplied instructed to not use defaults"
-		};
+	my $locale;
+	if ( defined $override->{locale} ) {
+		$locale = MooseX::Types::DateTime::to_Locale( $override->{locale} );
 	}
+	elsif ( $self->has_locale ) {
+		$locale = $self->locale
+	}
+	elsif ( $self->defaults ) {
+		carp "No locale supplied to constructor or the call to parse_datetime -- defaulting to en_US\n"
+			if $self->debug
+		;
+		$locale = DateTime::Locale->load( 'en_US' );
+	}
+	else {
+		carp "No timezone supplied instructed to not use defaults"
+	}
+
 
 	my $env = {
 		timezone   => $timezone
@@ -172,13 +176,13 @@ DateTimeX::Format - Moose Roles for building next generation DateTime formats
 
 This L<Moose::Role> simply provides an environment at instantation which can be overriden in the call to L<parse_data> by supplying a hash.
 
-All of the DateTime based methods, locale and timezone, coerce in accordence to what the docs of L<MooseX::Types::DateTime> say -- the coercions only occur in the constructor.
+All of the DateTime based methods, locale and timezone, coerce in accordence to what the docs of L<MooseX::Types::DateTime> say -- the coercions apply to both runtime calls and constructors.
 
 In addition this module provides two other accessors to assist in the development of modules in the L<DateTimeX::Format> namespace, these are C<debug>, and C<defaults>.
 
 =head1 OBJECT ENVIRONMENT
 
-All of these slots correspond to the environment: they can be supplied in the constructor or through accessors.
+All of these slots correspond to your object environment: they can be supplied in the constructor, or through accessors.
 
 =over 4
 
@@ -193,10 +197,6 @@ See the docs at L<MooseX::Types::DateTime> for informations about the coercions.
 Can be overridden in the call to ->parse_datetime.
 
 See the docs at L<MooseX::Types::DateTime> for informations about the coercions.
-
-=item * pattern( $str )
-
-Can be overridden in the call to ->parse_datetime.
 
 =item * debug( 1 | 0* )
 
