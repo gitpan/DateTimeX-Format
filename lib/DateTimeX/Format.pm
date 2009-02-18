@@ -2,16 +2,18 @@ package DateTimeX::Format;
 use strict;
 use warnings;
 
+use Moose::Role;
 use 5.010;
 use mro 'c3';
 
-use Moose::Role;
+use DateTime::Locale;
+use DateTime::TimeZone;
 use MooseX::Types::DateTime;
 use Carp;
 
 requires 'parse_datetime';
 
-our $VERSION = '00.01_01';
+our $VERSION = '00.01_02';
 
 has 'pattern' => (
 	isa         => 'Maybe[Str]'
@@ -105,6 +107,35 @@ around 'parse_datetime' => sub {
 	
 };
 
+sub new_datetime {
+	my ( $self, $args ) = @_;
+
+	if ( $self->debug ) {
+		carp "Year Month and Day should be specified if Year Month or Day is specified\n"
+			if ( $args->{day} // $args->{month} // $args->{year} )
+			&& ( ! defined $args->{day} or ! defined $args->{month} or ! defined $args->{year} )
+		;
+		carp "Marking Year Month and Day as a default\n"
+			if not defined ($args->{day} // $args->{months} // $args->{year})
+		;
+	}
+
+	DateTime->new(
+		time_zone => $args->{timezone}
+		, locale  => $args->{locale}
+
+		, nanosecond  => $args->{nanosecond}  // 0
+		, second      => $args->{second}      // 0
+		, minute      => $args->{minute}      // 0
+		, hour        => $args->{hour}        // 0
+
+		, day     => $args->{day}    // 1
+		, month   => $args->{month}  // 1
+		, year    => $args->{year}   // 1
+	);
+
+}
+
 1;
 
 no Moose::Role;
@@ -190,6 +221,16 @@ Set to one to get debugging information
 =item * defaults( 1* | 0 )
 
 Set to 0 to force data to be sent to the module
+
+=back
+
+=head1 HELPER FUNCTIONS
+
+=over 4
+
+=item new_datetime( $hashRef )
+
+Takes a hashRef of the name value pairs to hand off to DateTime->new
 
 =back
 
