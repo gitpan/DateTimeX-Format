@@ -1,5 +1,5 @@
 ---
-abstract: 'A base class for building next generation DateTime abstraction layers'
+abstract: 'Moose Roles for building next generation DateTime formats'
 author:
   - 'Evan Carroll <me@evancarroll.com>'
 build_requires:
@@ -20,9 +20,10 @@ requires:
   DateTime: 0
   DateTime::Locale: 0
   DateTime::TimeZone: 0
+  Moose: 0
   Moose::Role: 0
   MooseX::Types::DateTime: 0
   perl: 5.10.0
 resources:
   license: http://dev.perl.org/licenses/
-version: 00.01_02
+version: 00.01_03
