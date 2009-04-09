@@ -26,7 +26,7 @@ requires:
   Moose::Role: 0
   MooseX::Types::DateTime::ButMaintained: 0
   namespace::clean: 0
-  perl: 5.10.0
 resources:
   license: http://dev.perl.org/licenses/
-version: 00.01_06
+  repository: git@github.com:EvanCarroll/datetimex-format.git
+version: 1.00
