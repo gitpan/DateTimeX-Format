@@ -19,5 +19,7 @@ README
 t/00-load.t
 t/01-basic_use.t
 t/02-coercions.t
+t/03-custom_pattern.t
 t/pod-coverage.t
 t/pod.t
+test.t
