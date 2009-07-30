@@ -1,4 +1,10 @@
 Revision history for DateTimeX-Format
+
+1.03      July 30, 2009
+          Fixed failing test
+          Closed bug in CustomPattern, now dies wo/ time as argument
+          CustomPattern now overrides pattern right in runtime
+
 1.02      July 16, 2009
           Fixed role inclusion order / added test
           Moved to use non-string types internally (deprecated in MX::Types now)
